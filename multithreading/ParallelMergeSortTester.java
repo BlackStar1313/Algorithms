@@ -124,28 +124,4 @@ public class ParallelMergeSortTester {
 
 		return results;
 	}
-
-	/**
-	 * Taking from the standard input the number of threads.
-	 * 
-	 * @return	the number of threads if entered correctly.
-	 */
-	private static int threads(){
-
-		Scanner scan = new Scanner(System.in);
-		int nThread = 0;
-
-		System.out.print("How many threads do you wish to create? ");
-		do{
-			nThread = scan.nextInt();
-			if(nThread < 0) {
-				System.out.println("A negative number of threads is not feasible...Try again please!");
-				System.out.print("number of threads : ");
-			}
-		}while(nThread < 0);
-
-		System.out.println();
-		scan.close();
-		return nThread;
-	}
 }

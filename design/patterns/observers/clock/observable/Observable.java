@@ -1,16 +1,10 @@
-package design.patterns.observers.clock.observable;
+package clock.observable;
 
-import java.io.Serializable;
 import java.util.Vector;
 
-import clock.observers.Observer;
+import clock.observer.Observer;
 
-public class Observable implements Serializable{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 15625664351152946L;
+public abstract class Observable{
 
 
 	private static final int DEFAULT_SIZE = 1 << 4;// aka 16
@@ -50,7 +44,7 @@ public class Observable implements Serializable{
 			throw new IllegalArgumentException("An observer cannot be null!!");
 		}
 		if(!observers.contains(o)) {
-			observers.addElement(o);
+			observers.add(o);
 		}
 	}
 
@@ -64,7 +58,7 @@ public class Observable implements Serializable{
 		}
 
 		if(observers.contains(o)) {
-			observers.removeElement(o);
+			observers.remove(o);
 		}
 	}
 
@@ -75,11 +69,11 @@ public class Observable implements Serializable{
 		observers.removeAllElements();
 	}
 
-	public void notifyObservers(int h, int m, int s) {
+	public void notifyObservers() {
 
 		if(hasChanged()) {
 			for(Observer obs : observers) {
-				obs.update(h, m, s);
+				obs.update();
 			}
 			clearChanged();
 		}

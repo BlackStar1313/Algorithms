@@ -1,27 +1,31 @@
-package design.patterns.observers.clock.observers;
+package clock.observer;
 
+import java.awt.Dimension;
+import clock.observable.ClockTimer;
+import clock.panel.ClockPanel;
 import clock.panel.CustomAnalogClockPanel;
 
 public class CustomAnalogClock extends ClockFrame {
 
 	private static final long serialVersionUID = 6672895497326727502L;
 	
-	private static String title;
-	private static CustomAnalogClockPanel cstAnalogClock;
 	
-	static {
-		title = "Custom Analog Clock";
-		cstAnalogClock = new CustomAnalogClockPanel();
-	}
-	
-	public CustomAnalogClock(int width, int height) {
-		super(title, cstAnalogClock, width, height);
+	public CustomAnalogClock(ClockTimer timer, int width, int height) {
+		super(timer, width, height);
 	}
 
+
 	@Override
-	public void update(int h, int m, int s) {
-		cstAnalogClock.changeTime(h, m, s);
-		cstAnalogClock.repaint();
+	protected ClockPanel createClockPanel(int with, int height) {
+		CustomAnalogClockPanel clkAnalogClockPanel = new CustomAnalogClockPanel();
+		clkAnalogClockPanel.setPreferredSize(new Dimension(with, height));
+		return clkAnalogClockPanel;
+	}
+
+
+	@Override
+	protected String getFrameTitle() {
+		return "Custom Analog Clock";
 	}
 
 }

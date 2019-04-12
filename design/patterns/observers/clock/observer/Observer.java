@@ -1,12 +1,15 @@
-package design.patterns.observers.clock.observers;
+package clock.observer;
 
+/**
+ * <code>Observer</code> defines an interface for objects that should be 
+ * notified of changes by a subject.
+ * 
+ * @author Peguy Njoyim
+ */
 public interface Observer {
 	
 	/**
-	 * 
-	 * @param h
-	 * @param m
-	 * @param s
-	 */
-	void update(int h, int m, int s);
+     * Invoked by a subject when its state changed.
+     */
+	void update();
 }

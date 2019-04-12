@@ -1,5 +1,9 @@
-package design.patterns.observers.clock.observers;
+package clock.observer;
 
+import java.awt.Dimension;
+
+import clock.observable.ClockTimer;
+import clock.panel.ClockPanel;
 import clock.panel.DigitalClockPanel;
 
 public class DigitalClock extends ClockFrame {
@@ -10,23 +14,22 @@ public class DigitalClock extends ClockFrame {
 	private static final long serialVersionUID = 6863315938156821185L;
 	
 	
-	private static String title;
-	private static DigitalClockPanel digitalClockPanel;
-	
-	// a static block initializing static variables
-	static {
-		title = "Digital Clock";
-		digitalClockPanel = new DigitalClockPanel();
+	public DigitalClock(ClockTimer timer, int width, int height) {
+		super(timer, width, height);
 	}
 
-	public DigitalClock(int width, int height) {
-		super(title, digitalClockPanel, width, height);
-	}
 
 	@Override
-	public void update(int h, int m, int s) {
-		digitalClockPanel.changeTime(h, m, s);
-		digitalClockPanel.repaint();
+	protected ClockPanel createClockPanel(int with, int height) {
+		DigitalClockPanel clockPanel = new DigitalClockPanel();
+		clockPanel.setPreferredSize(new Dimension(with, height));
+		return clockPanel;
+	}
+
+
+	@Override
+	protected String getFrameTitle() {
+		return "Digital Clock";
 	}
 
 }

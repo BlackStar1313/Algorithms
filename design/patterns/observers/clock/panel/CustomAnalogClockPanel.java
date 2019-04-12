@@ -1,4 +1,4 @@
-package design.patterns.observers.clock.panel;
+package clock.panel;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -18,7 +18,7 @@ public class CustomAnalogClockPanel extends ClockPanel {
 	private static final double hda = mda / 12;
 	private static final double nda = Math.PI / 6;
 
-	private static final int FONT_SIZE = 30;
+	private int width, height;
 
 	private int[] arcSecond = new int[61];
 	private int[] arcMinute = new int[61];
@@ -36,47 +36,86 @@ public class CustomAnalogClockPanel extends ClockPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
 
-		int border = 10;
-		int r = (Math.min(width, height) / 2) - border;
+		int border = 50;
 
+		width = getWidth();
+		height = getHeight();
+
+		Point center = new Point(width / 2, height / 2);
+		int radius = (Math.min(width, height) / 2) - border;
+
+		// setting the font
+		final int FONT_SIZE = (int)((1.0 / 5.0) * radius);
+		Font font = new Font("digital-7", Font.PLAIN, FONT_SIZE);
+		setFont(font);
 
 		// Clear background.
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
 		
-		Point center = new Point(width / 2, height / 2);
-
-		// drawing the clock circle
-		g.setColor(Color.WHITE);
-		g.fillOval(center.x - r, center.y - r, 2 * r,  2 * r);
-		Graphics2D g2d = (Graphics2D)g;//Tell the compiler "g is actually a graphics2D"
-
-		Font font = new Font("digital-7", Font.PLAIN, FONT_SIZE);
-		setFont(font);
-		
 		// Draw the clock components.
-		
-		drawSecondHand(g, center, r, second);
-		g2d.setStroke(new BasicStroke(20f));
-		g.setColor(Color.BLACK);
-		g.drawOval(center.x - r, center.y - r, 2 * r,  2 * r);
-		drawClockNumbers(g, font, center, r);
-		drawTickMarks(g, center, r);
-		drawMinuteHand(g, center, r, minute, second);
-		drawHourHand(g, center, r, hour, minute, second);
-		
+		drawSecondHand(g, center, radius, second);
+		DesignClock(g, center, radius);
+		drawClockNumbers(g, font, center, radius);
+		drawHourHand(g, center, radius, hour, minute, second);
+		drawMinuteHand(g, center, radius, minute, second);
 		return;
 	}
 
-	
+	/**
+	 * Draw the design of the clock.
+	 * @param g			the graphic element.
+	 * @param c			the center of this clock.
+	 * @param radius	the radius of this clock.
+	 */
+	private void DesignClock(Graphics g, Point c, int radius) {
+		
+		Graphics2D g2d = (Graphics2D)g;// Tell the compiler "g is actually a graphics2D"
+
+		// drawing the tick marks
+		int widthLitteMinutes = (int)(radius * (0.1 / 4.5));
+		int widthBigMinutes = (int)(radius * (0.2 / 4.5));
+
+		int lengthLitteMinutes = (int)(radius * (0.4 / 4.5));
+		int lengthBigMinutes = (int)(radius * (0.8 / 4.5));
+
+		int minRadius, maxRadius;
+		for (int sec = 0; sec < 60; sec++) {
+			if (sec % 5 == 0) {
+				g2d.setStroke(new BasicStroke(widthBigMinutes));
+				g.setColor(new Color(255, 22, 10));
+				minRadius = radius;
+				maxRadius = radius - lengthBigMinutes;
+			}else{
+				g2d.setStroke(new BasicStroke(widthLitteMinutes));
+				g.setColor(Color.DARK_GRAY);
+				minRadius = radius;
+				maxRadius = radius - lengthLitteMinutes;
+			}
+			drawTickMarks(g, c.x, c.y, sda*sec, minRadius, maxRadius);
+		}
+
+		// drawing the outer black circle
+		int blackCircleWidth = (int)((0.5 / 5.0) * radius);
+		g2d.setStroke(new BasicStroke(blackCircleWidth));
+		g.setColor(Color.BLACK);
+		g.drawOval(c.x - radius, c.y - radius, 2 * radius, 2 * radius);
+	}
+
+	/**
+	 * Draw the clock number using a given font.
+	 * @param g		The graphic element.
+	 * @param font	The font's number.
+	 * @param c		The center of this clock.
+	 * @param r		The radius of this clock.
+	 */
 	private void drawClockNumbers(Graphics g, Font font, Point c, int r) {
 
 		FontMetrics fm = getFontMetrics(font);
 		int fa = fm.getMaxAscent();
-		int fh = (fm.getMaxAscent() + fm.getMaxDescent()) / 2;
-		int nr = (80 * r) / 100;
+		int fh = (int) ((fm.getMaxAscent() + fm.getMaxDescent()) / 1.5);
+		int nr = (70 * r) / 100;
 		for (int i = 0; i < 12; i++) {
 			String ns = Integer.toString((i == 0) ? 12 : i);
 			int nx = (int) ((Math.cos((i * nda) - sa) * nr) + c.x);
@@ -87,77 +126,70 @@ public class CustomAnalogClockPanel extends ClockPanel {
 		}
 	}
 
-
-
-	private void drawRadius(Graphics g, int x, int y, double angle, int minRadius, int maxRadius) {
-		float sine = (float)Math.sin(angle);
-		float cosine = (float)Math.cos(angle);
-		int dxmin = (int)(minRadius * sine);
-		int dymin = (int)(minRadius * cosine);
-		int dxmax = (int)(maxRadius * sine);
-		int dymax = (int)(maxRadius * cosine);
-
-		Graphics2D g2d = (Graphics2D)g;
-
-		g2d.setStroke(new BasicStroke(3f));
-		g.setColor(Color.BLACK);
-		g.drawLine(x+dxmin, y+dymin, x+dxmax, y+dymax);
-	}
-
-	private void drawTickMarks(Graphics g, Point c, int r) {
-		int tr = (int) (height/34f);
-		for (int sec = 0; sec < 60; sec++) {
-			int ticStart;
-			if (sec % 5 == 0) {
-				ticStart = width/2-15;
-			}else{
-				ticStart = width/2-5;
-			}
-			drawRadius(g, c.x, c.y, sda*sec, ticStart-tr, width/2-tr);
-
-		}
-	}
-
-	private void drawSecondHand(Graphics g, Point c, int r, int s) {
-		int sr = (int) (r - (height * 0.12f));
+	/**
+	 * Draws the clock's second hand.
+	 * @param g The graphic element.
+	 * @param c center of the analog clock.
+	 * @param r radius of the analog clock.
+	 * @param s seconds affected to the clock.
+	 */
+	private void drawSecondHand(Graphics g, Point c, int radius, int s) {
+		int sr = (int) (radius - (height * 0.12f));
 		int sx = (int) ((Math.cos((s * sda) - sa) * sr) + c.x);
 		int sy = (int) ((Math.sin((s * sda) - sa) * sr) + c.y);
 
 		Graphics2D g2d = (Graphics2D)g;
-		g2d.setStroke(new BasicStroke(5f));
+		int redFillOval = (int)((0.1 / 5.0) * radius);
+		g2d.setStroke(new BasicStroke(redFillOval));
 		g.setColor(new Color(1f, 0f, 0f, .5f));
-		g.fillArc(c.x - r, c.y - r, 2 * r, 2 * r, 90, arcSecond[second]);
+		g.fillArc(c.x - radius, c.y - radius, 2 * radius, 2 * radius, 90, arcSecond[second]);
 		g.drawLine(c.x, c.y, sx, sy);
 	}
 
 
-	private void drawMinuteHand(Graphics g, Point c, int r, int m, int s) {
+	/**
+	 * Draws the clock's minute hand.
+	 * @param g The graphic element.
+	 * @param c center of the analog clock.
+	 * @param r radius of the analog clock.
+	 * @param m minutes affected to the clock.
+	 * @param s seconds affected to the clock.
+	 */
+	private void drawMinuteHand(Graphics g, Point c, int radius, int m, int s) {
 		int ms = m * 60;
-		int mr = (int) (.7 * r);
+		int mr = (int) ((3.0 / 5.0) * radius);
 		int mx = (int) ((Math.cos(((ms + s) * mda) - sa) * mr) + c.x);
 		int my = (int) ((Math.sin(((ms + s) * mda) - sa) * mr) + c.y);
 		Graphics2D g2d = (Graphics2D)g;
-		g2d.setStroke(new BasicStroke(6f));
+		
+		int BlueCircleWidth = (int)((0.1 / 5.0) * radius);
+		g2d.setStroke(new BasicStroke(BlueCircleWidth));
 		g.setColor(Color.BLUE);
-		g.drawArc(c.x - r, c.y - r, 2 * r, 2 * r, 90, arcMinute[minute]);
-		g.drawLine(c.x, c.y - 1, mx, my);
-		g.drawLine(c.x - 1, c.y, mx, my);
+		g.drawArc(c.x - radius, c.y - radius, 2 * radius, 2 * radius, 90, arcMinute[minute]);
+		g.drawLine(c.x, c.y, mx, my);
 	}
 
-	private void drawHourHand(Graphics g, Point c, int r, int h, int m, int s) {
+	/**
+	 * Draws the clock's hour hand.
+	 * @param g The graphic element.
+	 * @param c center of the analog clock.
+	 * @param r radius of the analog clock.
+	 * @param h hours affected to the clock
+	 * @param m minutes affected to the clock.
+	 * @param s seconds affected to the clock.
+	 */
+	private void drawHourHand(Graphics g, Point c, int radius, int h, int m, int s) {
 		int ms = m * 60;
 		int hs = h * 60 * 60;
-		int hr = (int) (.5 * r);
+		int hr = (int) (.5 * radius);
 		int hx = (int) ((Math.cos(((hs + ms + s) * hda) - sa) * hr) + c.x);
 		int hy = (int) ((Math.sin(((hs + ms + s) * hda) - sa) * hr) + c.y);
 
 		Graphics2D g2d = (Graphics2D)g;
 
-		g2d.setStroke(new BasicStroke(6f));
+		int BlackCircleWidth = (int)((0.2 / 5.0) * radius);
+		g2d.setStroke(new BasicStroke(BlackCircleWidth));
 		g.setColor(Color.BLACK);
-		g.drawLine(c.x, c.y - 1, hx, hy);
-		g.drawLine(c.x - 1, c.y, hx, hy);
+		g.drawLine(c.x, c.y, hx, hy);
 	}
-
-
 }

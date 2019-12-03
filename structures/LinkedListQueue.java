@@ -20,7 +20,7 @@ public class LinkedListQueue<T> implements Iterable<T>{
 	private int size;
 
 	public void Enqueue(T data) {
-		//A pointer to the last node (i.e., the pointer which holds the last node before the creation a new one).
+		//A pointer to the last node (i.e., the pointer which holds the last node before the creation of a new one).
 		Node<T> oldLast = null;
 		
 		if(last != null) {//don't take the address when we create the very first node.

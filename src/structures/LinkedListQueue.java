@@ -16,6 +16,10 @@ import java.util.NoSuchElementException;
  */
 public class LinkedListQueue<T> implements Iterable<T>{
 
+	public static void main(String[] args) {
+		System.out.println(0);
+	}
+
 	private Node<T> last;//A pointer to the last Node.
 	private int size;
 

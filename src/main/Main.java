@@ -1,7 +1,6 @@
 package main;
 
 import helper.GenericHelper;
-import multithreading.MultiThreadedPrimeTester;
 import multithreading.ParallelMergeSortTester;
 import sorting.Quick;
 import sorting.Selection;
@@ -16,8 +15,6 @@ public class Main{
 	public static void main(String[] args){
 		
 		//ParallelMergeSortTester.process();
-		
-		MultiThreadedPrimeTester.process();
 		
 		/*Stack<Integer> stack = new Stack<>();
 		stack.push(1);

@@ -14,16 +14,12 @@ import java.util.NoSuchElementException;
  *
  * @param <T>	Type of component elements
  */
-public class LinkedListQueue<T> implements Iterable<T>{
-
-	public static void main(String[] args) {
-		System.out.println(0);
-	}
+public class CircularLinkedList<T> implements Iterable<T>{
 
 	private Node<T> last;//A pointer to the last Node.
 	private int size;
 
-	public void Enqueue(T data) {
+	public void enqueue(T data) {
 		//A pointer to the last node (i.e., the pointer which holds the last node before the creation of a new one).
 		Node<T> oldLast = null;
 		
@@ -33,7 +29,7 @@ public class LinkedListQueue<T> implements Iterable<T>{
 		final Node<T> newNode = Node.Build(data);//Create a new node.
 		last = newNode;//Take a new address
 
-		if(IsEmpty()) {//If the Queue is empty, i.e., if there is no LAST element then this node will become the LAST node.
+		if(isEmpty()) {//If the Queue is empty, i.e., if there is no LAST element then this node will become the LAST node.
 			//The last node is also the first one.
 			last.next = last;
 		}else {
@@ -42,11 +38,10 @@ public class LinkedListQueue<T> implements Iterable<T>{
 			oldLast.next = last;
 		}
 		size++;
-		return;
 	}
 
-	public T Dequeue() {
-		if(IsEmpty()) {
+	public T dequeue() {
+		if(isEmpty()) {
 			throw new IllegalStateException("The Queue is empty");
 		}
 
@@ -56,7 +51,6 @@ public class LinkedListQueue<T> implements Iterable<T>{
 		
 		//Unreferencing the current first node.
 		oldFirst.data = null;
-		oldFirst = null;
 		size--;
 		return currentData;
 	}
@@ -88,27 +82,27 @@ public class LinkedListQueue<T> implements Iterable<T>{
 	 * 
 	 * @return	true if the list is empty, otherwise false.
 	 */
-	public boolean IsEmpty() {
+	public boolean isEmpty() {
 		return size==0;
 	}
 
 	public String toString() {
-		if(IsEmpty()) {
+		if(isEmpty()) {
 			System.out.println("The Queue is empty");
 		}else {
-			String s = "[";
+			StringBuilder sb = new StringBuilder();
+			sb.append("[");
 			Node<T> head = last.next;
 			Node<T> current = last.next;
-
 			do {
-				s+=current.data;
+				sb.append(current.data);
 				if(current.next != head) {
-					s += ", ";
+					sb.append(", ");
+                    current = current.next;
 				}
-				current = current.next;
 			}while(current != head);
-			s += "]";
-			return s;
+			sb.append("]");
+			return sb.toString();
 		}
 		
 		return null;
@@ -116,34 +110,32 @@ public class LinkedListQueue<T> implements Iterable<T>{
 
 	@Override
 	public Iterator<T> iterator() {
-		LinkedListQueueIterator llQueueIterator = new LinkedListQueueIterator();
-		return llQueueIterator;
+		return new LinkedListQueueIterator();
 	}
 
 	private class LinkedListQueueIterator implements Iterator<T>{
-		
-		private Node<T> current = last.next;
+
+		private Node<T> head = last.next;
+		private Node<T> current = head;
+		private boolean visited = false;
 
 		@Override
 		public boolean hasNext() {
-			return current != null;
+			if(isEmpty()) return false;
+			return !visited;
 		}
 
 		@Override
 		public T next() {
-			if (!hasNext()) {
-				throw new NoSuchElementException("The node does not exist!");
-			}
-			
-			T data = current.data;
+            T data = current.data;
 			current = current.next;
+			visited = current == head;
 			return data;
 		}
 		
 		@Override
 		public void remove() {
-			Dequeue();
-			return;
+			dequeue();
 		}
 	}
 }

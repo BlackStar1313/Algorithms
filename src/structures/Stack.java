@@ -1,7 +1,5 @@
 package structures;
 
-import java.util.Comparator;
-
 public class Stack<T>{
 	private T[] data;
 	private int currentSize, indexOfTopElement;
@@ -18,15 +16,13 @@ public class Stack<T>{
 	}
 
 	@SuppressWarnings("unchecked")
-	public void EnsureCapacity(int newCapacity) {
+	private void ensureCapacity(int newCapacity) {
 		T[] newData = (T[]) new Comparable[newCapacity];
 
 		for(int j = 0; j < currentSize; j++) {
 			newData[j] = data[j];
 		}
 		data = newData;
-		newData = null; //To help GC!!
-		return;
 	}
 
 	/**
@@ -36,7 +32,7 @@ public class Stack<T>{
 	 */
 	public void push(T element){
 		if(isFull()) {
-			EnsureCapacity(currentSize * 2);
+			ensureCapacity(currentSize * 2);
 		}
 		data[++indexOfTopElement] = element;
 		currentSize++;
@@ -58,36 +54,6 @@ public class Stack<T>{
 		}
 		return elt;
 	}
-	
-	/**
-	 * Find the minimum element of this stack.
-	 * 
-	 * @return	the min element.
-	 */
-	/*public T min() {
-		
-		if(this.isEmpty()) {
-			throw new IllegalStateException("The stack is empty");
-		}
-		
-		Stack<T> temp = new Stack<>();// creating a temporary stack.
-		T min = this.pop();
-		temp.push(min);// pushing right after so that the content of this stack will not altered later.
-		
-		while(!this.isEmpty()) {
-			T elt = this.pop();
-			
-			if(comp.compareTo(min) < 0) {
-				min = elt;
-			}
-			temp.push(elt);
-		}
-		
-		while(!temp.isEmpty()) {
-			this.push(temp.pop());// restoring the remaining elements into the original stack.
-		}
-		return min;
-	}*/
 
 	public boolean isFull(){
 		return currentSize == data.length;
@@ -99,12 +65,13 @@ public class Stack<T>{
 	
 	@Override
 	public String toString() {
-		String str = "[";
+		StringBuilder str = new StringBuilder();
+		str.append("[");
 		int i;
 		for(i = 0; i < currentSize - 1; i++) {
-			str += data[i] + ", ";
+			str.append(data[i]).append(", ");
 		}
-		str += data[i] + "]";
-		return str;
+		str.append(data[i]).append("]");
+		return str.toString();
 	}
 }

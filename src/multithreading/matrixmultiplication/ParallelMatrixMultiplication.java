@@ -48,7 +48,7 @@ public final class ParallelMatrixMultiplication{
 
 	public void startProcessing() {
 
-		/**Assigning roles....**/
+		/*Assigning roles....*/
 		int rowThread = 0, startRow = 0, chunkSize = (int) (Math.ceil(A.rows / (double)nbThread));;
 
 		// initializing threads and distributing the work load and adding to the pool...
@@ -108,8 +108,7 @@ public final class ParallelMatrixMultiplication{
 		 */
 		private CountDownLatch startSignal, doneSignal;
 
-		public Worker(int startRow, int stopRow, Matrix first, Matrix second, CountDownLatch startSignal, CountDownLatch doneSignal) {
-
+		private Worker(int startRow, int stopRow, Matrix first, Matrix second, CountDownLatch startSignal, CountDownLatch doneSignal) {
 			this.startRow = startRow;
 			this.stopRow = stopRow;
 			this.startSignal = startSignal;
@@ -144,17 +143,16 @@ public final class ParallelMatrixMultiplication{
 		/**
 		 * Check whether the multiplication of two matrix is possible that is to say if the number of columns for a given matrix A
 		 * is the same number of rows of a given matrix B.
-		 * @param B		the other matrix to check to
 		 * @return		true if the multiplication is doable, otherwise false.
 		 */
-		public boolean isMultiplicationPossible() {
+		private boolean isMultiplicationPossible() {
 			if(A == B) {
 				return true;
 			}else if(B == null) {
 				return false;
 			}
 
-			return (this != null && A.cols == B.rows);
+			return A.cols == B.rows;
 		}
 	}
 }

@@ -46,8 +46,6 @@ public class RpnEvaluationAlgorithm implements IRpnEvaluationAlgorithm
     			}
     			Token element = new Token(result);
     			stack.push(element);
-    			element = null;//To help GC!!
-    			currentToken = null;//To help GC!!
     		
     		}else if(currentToken.type == TokenType.Function) {
     			var value = stack.pop().asNumber;
@@ -70,7 +68,6 @@ public class RpnEvaluationAlgorithm implements IRpnEvaluationAlgorithm
     	}
     	
     	result = stack.pop().asNumber;
-    	stack = null;//To help GC!!
         return result;
     }
 
